@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist",
+		"target": "ES2020",
+		"module": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"moduleResolution": "Node",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"noUnusedParameters": true,
+		"noUnusedLocals": true,
+		"isolatedModules": true,
+		"removeComments": true,
+		"types": ["@types/node"],
+		"baseUrl": "./",
+		"paths": {
+			"qar/*": ["./src/*"],
+			"qar": ["./src/index.ts"]
+		},
+		"sourceMap": true
+	}
+}
