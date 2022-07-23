@@ -57,7 +57,7 @@ export default function makeQAR(
 	);
 	// Write the size before it.
 	const headerSizeBuffer = Buffer.alloc(SIZE_LENGTH);
-	headerSizeBuffer.writeDoubleBE(headerBuffer.length);
+	headerSizeBuffer.writeDoubleLE(headerBuffer.length);
 	fs.writeSync(
 		qarFD,
 		headerSizeBuffer,
@@ -162,7 +162,7 @@ export default function makeQAR(
 
 	// Write the size to the very end.
 	const sizeBuffer = Buffer.alloc(SIZE_LENGTH);
-	sizeBuffer.writeDoubleBE(compressedFileStructureBuffer.length);
+	sizeBuffer.writeDoubleLE(compressedFileStructureBuffer.length);
 	fs.writeSync(qarFD, sizeBuffer, 0, SIZE_LENGTH, position);
 
 	// All the data has been populated so it can be hashed and written.

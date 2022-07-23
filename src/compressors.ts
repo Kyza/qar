@@ -28,6 +28,15 @@ const compressors: Record<
 			return zlib.gunzipSync(buffer, options);
 		},
 	},
+	// Flate is untested but Copilot made it so it's totally not my fault if it's slow or doesn't work.
+	flate: {
+		compress(buffer: Buffer, options?: zlib.ZlibOptions): Buffer {
+			return zlib.deflateSync(buffer, options);
+		},
+		decompress(buffer: Buffer, options?: zlib.ZlibOptions): Buffer {
+			return zlib.inflateSync(buffer, options);
+		},
+	},
 	none: {
 		compress(buffer: Buffer): Buffer {
 			return buffer;

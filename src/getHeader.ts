@@ -14,7 +14,7 @@ export default function getHeader(qar: QAR): QARHeader {
 		SIZE_LENGTH,
 		IDENTIFIER_AND_HASH_LENGTH
 	);
-	const headerSize = headerSizeBuffer.readDoubleBE();
+	const headerSize = headerSizeBuffer.readDoubleLE();
 
 	const headerBuffer = Buffer.alloc(headerSize);
 	fs.readSync(

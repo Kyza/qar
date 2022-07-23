@@ -5,39 +5,67 @@ import path from "path";
 import { make, open } from "../src";
 
 const testASAR = path.resolve("bench", "test.asar");
-const testQAR = path.resolve("bench", "test.qar");
+// const zstdQAR = path.resolve("bench", "zstd.qar");
+const brotliQAR = path.resolve("bench", "brotli.qar");
+const uncmpQAR = path.resolve("bench", "uncmp.qar");
 const source = path.resolve("src");
 
-make(source, testQAR, {
+make(source, brotliQAR, {
 	compression: { name: "brotli" },
+});
+// make(source, zstdQAR, {
+// 	compression: { name: "zstd" },
+// });
+make(source, uncmpQAR, {
+	compression: { name: "none" },
 });
 
 group("make archive", () => {
-	bench("asar", async () => {
+	baseline("asar", async () => {
 		await asar.createPackage(source, testASAR);
 	});
-	baseline("qar", () => {
-		make(source, testQAR, {
+	// bench("qar zstd", () => {
+	// 	make(source, zstdQAR, {
+	// 		compression: { name: "zstd" },
+	// 	});
+	// });
+	bench("qar brotli", () => {
+		make(source, brotliQAR, {
 			compression: { name: "brotli" },
+		});
+	});
+	bench("qar none", () => {
+		make(source, uncmpQAR, {
+			compression: { name: "none" },
 		});
 	});
 });
 
 group("read one archive", () => {
-	const qar = open(testQAR);
+	// const zstd = open(zstdQAR);
+	const brotli = open(brotliQAR);
+	const none = open(uncmpQAR);
 
-	bench("asar", async () => {
-		asar.extractFile(testASAR, "make.ts");
+	baseline("asar", async () => {
+		asar.extractFile(testASAR, "index.ts");
 	});
-	baseline("qar", () => {
-		qar.readFileSync(["make.ts"]);
+	// bench("qar zstd", () => {
+	// 	zstd.readFileSync(["index.ts"]);
+	// });
+	bench("qar brotli", () => {
+		brotli.readFileSync(["index.ts"]);
+	});
+	bench("qar none", () => {
+		none.readFileSync(["index.ts"]);
 	});
 });
 
 group("read full archive", () => {
-	const qar = open(testQAR);
+	// const zstd = open(zstdQAR);
+	const brotli = open(brotliQAR);
+	const none = open(uncmpQAR);
 
-	bench("asar", async () => {
+	baseline("asar", async () => {
 		const files = asar
 			.listPackage(testASAR)
 			.map((file) => file.replace(/\\/g, "/").replace(/^\//, ""))
@@ -47,9 +75,19 @@ group("read full archive", () => {
 			asar.extractFile(testASAR, file);
 		}
 	});
-	baseline("qar", () => {
-		for (const file of qar.files ?? []) {
-			qar.readFileSync(file);
+	// bench("qar zstd", () => {
+	// 	for (const file of zstd.files ?? []) {
+	// 		zstd.readFileSync(file);
+	// 	}
+	// });
+	bench("qar brotli", () => {
+		for (const file of brotli.files ?? []) {
+			brotli.readFileSync(file);
+		}
+	});
+	bench("qar none", () => {
+		for (const file of none.files ?? []) {
+			none.readFileSync(file);
 		}
 	});
 });
@@ -67,7 +105,11 @@ console.log();
 
 // Calculate the size of each archive and compare them.
 const asarSize = fs.statSync(testASAR).size;
-const qarSize = fs.statSync(testQAR).size;
+const brotliSize = fs.statSync(brotliQAR).size;
+// const zstdSize = fs.statSync(zstdQAR).size;
+const noneSize = fs.statSync(uncmpQAR).size;
 
 console.log("ASAR Size:", asarSize.toLocaleString());
-console.log("QAR Size: ", qarSize.toLocaleString());
+console.log("Brotli QAR Size:", brotliSize.toLocaleString());
+// console.log("Zstd QAR Size:", zstdSize.toLocaleString());
+console.log("Uncompressed QAR Size:", noneSize.toLocaleString());

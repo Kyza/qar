@@ -2,8 +2,6 @@
 
 An archive inspired by ASAR meant for compression while keeping quick random access.
 
-<img src="./qar.png" />
-
 ## Known Issues
 
 - Missing streaming files from archive.
@@ -19,17 +17,15 @@ Of course, your milage may vary so feel free to benchmark yourself and make more
 
 ## Identifier
 
-The first 3 bytes are the identifier `QAR`.
+The first 3 bytes are the identifier `QAR`. This is used to quickly "ensure" that the file is indeed a QAR archive.
 
 ## Checksum
 
-The next 16 bytes are the checksum of the archive.
-
-This is used to verify that the archive is not corrupted.
+The next 16 bytes are the MD5 checksum of the archive. This is used to verify that the archive is not corrupted. ASAR does include hashes for this purpose, but it includes one *for every single file* it contains and does not cover verifying the file structure.
 
 ## Header
 
-The next 8 bytes are a double-precision floating point number representing the size of the header. The actual header follows directly afterwards.
+The next 8 bytes are a little endian double representing the size of the header. The actual header follows directly afterwards.
 
 The header type is [`QARHeader`](./src/types.ts).
 
@@ -39,9 +35,40 @@ The files are stored directly after the header in an uninterrupted line. They ar
 
 ### Compression
 
-Explaination coming soon.
+By default, Brotli compression is used in QAR since it has the best compression ratio and fastest speeds. Everything after the header aside from the footer length at the very end gets compressed when an archive is made. Each file--including the footer--is compressed separately and by default chunked in 64MB chunks to enable streaming.
 
-You can add new compression methods by implementing it in the [`compressors.ts`](./src/compressors.ts) file.
+There are four compression methods implemented:
+
+- `brotli` (default)
+- `gzip`
+- `flate` (deflate/inflate)
+- `none` (no compression)
+
+You can add new compression methods by implementing it on the [`compressors.ts`](./src/compressors.ts) object.
+
+Here's an example that implements ZSTD compression:
+
+```js
+import { make, compressors } from "qar";
+import zstd from "zstd";
+
+compressors.zstd = {
+	compress(data: Buffer): Buffer {
+		return zstd.compress(data);
+	},
+	decompress(data: Buffer): Buffer {
+		return zstd.decompress(data);
+	}
+};
+
+// From now on QAR is able to compress and decompress with ZSTD.
+
+make(source, qarFile, {
+	compression: { name: "zstd" },
+});
+```
+
+Chunking is automatically handled by QAR to make it more simple for you to stream files from the archive.
 
 ### Chunk Size
 
@@ -53,7 +80,7 @@ The chunk size is used for reading the files in streams rather than all at once,
 
 ## Footer
 
-After the files, the footer is stored at the end. After that, the length of the footer is saved in 8 bytes similar to with the header.
+After the files, the footer is stored at the end. After that, the length of the footer is saved in an 8 byte little endian double just like the header.
 
 The structure of the footer is [`QARFooter`](./src/types.ts). Currently it may be subject to change.
 

@@ -17,7 +17,7 @@ export default function getFooter(qar: QAR): FolderChildren {
 		fileSize - SIZE_LENGTH
 	);
 
-	const footerSize = footerSizeBuffer.readDoubleBE();
+	const footerSize = footerSizeBuffer.readDoubleLE();
 
 	const footerStart = fileSize - footerSize - SIZE_LENGTH;
 
