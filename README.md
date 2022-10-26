@@ -2,6 +2,8 @@
 
 An archive inspired by ASAR meant for compression while keeping quick random access.
 
+<img src="./qar.png" />
+
 ## Known Issues
 
 - Missing streaming files from archive.
