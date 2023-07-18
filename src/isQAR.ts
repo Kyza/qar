@@ -1,5 +1,5 @@
-import fs from "fs";
-import { IDENTIFIER_LENGTH, QAR_IDENTIFIER } from "./constants";
+import fs from "node:fs";
+import { IDENTIFIER_LENGTH, QAR_IDENTIFIER } from "./constants.js";
 
 export default function isQAR(path: string): boolean {
 	const fd = fs.openSync(path, "r");

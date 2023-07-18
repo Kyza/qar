@@ -1,4 +1,5 @@
-import fs from "fs";
+import fs from "node:fs";
+import compressors from "./compressors.js";
 import {
 	DEFAULT_CHUNK_SIZE,
 	HASH_LENGTH,
@@ -7,20 +8,20 @@ import {
 	QAR_IDENTIFIER,
 	SIZE_LENGTH,
 	VERSION,
-} from "./constants";
-import { compressors, getHash } from "./index";
-import { QAR } from "./open";
+} from "./constants.js";
+import getHash from "./getHash.js";
 import {
 	DeepPartial,
 	EmbedArray,
 	FileType,
 	FolderChildren,
+	QAR,
 	QARHeader,
-} from "./types";
-import { stringify } from "./util/jsonReplacers";
-import makeEmbedArrayFromFolder from "./util/makeEmbedArrayFromFolder";
-import { readFileChunks } from "./util/readFileChunks";
-import setFileInStructure from "./util/setFileInFolderRoot";
+} from "./types.js";
+import { stringify } from "./util/jsonReplacers.js";
+import makeEmbedArrayFromFolder from "./util/makeEmbedArrayFromFolder.js";
+import { readFileChunks } from "./util/readFileChunks.js";
+import setFileInStructure from "./util/setFileInFolderRoot.js";
 
 export default function makeQAR(
 	folderOrFiles: string | EmbedArray,
@@ -97,19 +98,14 @@ export default function makeQAR(
 					fromFD,
 					(buffer) => {
 						// TODO: Support other compression methods.
-						const compressedBuffer = compressors[
-							options.compression.name
-						].compress(buffer, options.compression.options);
+						const compressedBuffer = compressors[options.compression.name].compress(
+							buffer,
+							options.compression.options
+						);
 
 						chunks.push(compressedBuffer.length);
 
-						fs.writeSync(
-							qarFD,
-							compressedBuffer,
-							0,
-							compressedBuffer.length,
-							position
-						);
+						fs.writeSync(qarFD, compressedBuffer, 0, compressedBuffer.length, position);
 
 						position += compressedBuffer.length;
 					},

@@ -1,7 +1,7 @@
-import fs from "fs";
-import path from "path";
-import { isQAR, make, open } from "../src";
-import makeEmbedArrayFromFolder from "../src/util/makeEmbedArrayFromFolder";
+import fs from "node:fs";
+import path from "node:path";
+import { isQAR, make, open } from "../src/index.js.js";
+import makeEmbedArrayFromFolder from "../src/util/makeEmbedArrayFromFolder.js.js";
 
 const qarFile = path.resolve("./test/test.qar");
 const source = path.resolve("./src");
@@ -26,9 +26,9 @@ console.log("verifyIntegrity", qar.verifyIntegrity());
 
 console.log("getHeader", qar.header);
 
-console.log("getFooter", qar.footer);
+// console.log("getFooter", qar.footer);
 
-console.log("readFileSync", qar.readFileSync("make.ts").toString());
+// console.log("readFileSync", qar.readFileSync("make.ts").toString());
 
 // console.log("fs.readFileSync", fs.readFileSync(path.resolve("./src/make.ts")));
 

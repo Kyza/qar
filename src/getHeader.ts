@@ -1,8 +1,7 @@
-import fs from "fs";
-import { IDENTIFIER_AND_HASH_LENGTH, SIZE_LENGTH } from ".";
-import { QAR } from "./open";
-import { QARHeader } from "./types";
-import { parse } from "./util/jsonReplacers";
+import fs from "node:fs";
+import { IDENTIFIER_AND_HASH_LENGTH, SIZE_LENGTH } from "./constants.js";
+import { QAR, QARHeader } from "./types.js";
+import { parse } from "./util/jsonReplacers.js";
 
 export default function getHeader(qar: QAR): QARHeader {
 	// Read the 8 bytes after the identifier and hash.

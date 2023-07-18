@@ -4,16 +4,19 @@ An archive inspired by ASAR meant for compression while keeping quick random acc
 
 <img src="./qar.png" />
 
-## Known Issues
+```bash
+pnpm i qar
+```
 
-- Missing streaming files from archive.
-- Temporary performance issue with creating archives since last change.
+## TODOs
+
+- [ ] Implement streaming files from archive.
 
 ## Benchmarks
 
 QAR is generally faster than ASAR, but **ASAR has the *potential* to be the faster of the two** considering what it intends to support and how it was written.
 
-On my machine, QAR's read speed with brotli compression is about 1.3 to 1.9x faster. Without compression, it is about 3 to 9x faster. Assuming this was implemented into Electron (don't get your hopes up lol), your code *could* load that much faster. QAR is also faster when creating archives, but most people won't care too much about that. It's all about the read speed!
+On my machine, QAR's read speed with brotli compression is about 1.3 to 1.9x faster. Without compression, it is about 3 to 9x faster. Assuming this was implemented into Electron (don't get your hopes up lol), your code *could* load that much faster. QAR is also sometimes faster when creating archives, but most people won't care too much about that. It's all about the read speed!
 
 Of course, your milage may vary so feel free to benchmark yourself and make more comprehensive benchmarks in the [benchmarks](./bench) folder.
 
@@ -74,7 +77,7 @@ Chunking is automatically handled by QAR to make it more simple for you to strea
 
 ### Chunk Size
 
-The chunk size is used for reading the files in streams rather than all at once, so using a larger chunk size will use more memory but take up less disc space. The default chunk size is 64MB, 1,024 times the size `fs.createReadStream()` uses by default. Using `Infinity` as the chunk size will read the file in a single chunk, disabling streaming but using the least disc space possible. That is not recommended if you plan on storing large files.
+The chunk size is used for reading the files in streams rather than all at once, so using a larger chunk size will use more memory but take up less disc space. The default chunk size is 64MB, 1,024 times the size `fs.createReadStream()` uses by default. Using `Infinity` as the chunk size will read the file in a single chunk, disabling streaming but using the least storage space possible. That is not recommended if you plan on storing large files.
 
 ### Symlinks
 

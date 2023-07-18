@@ -1,4 +1,4 @@
-import zlib from "zlib";
+import zlib from "node:zlib";
 
 const compressors: Record<
 	string,
@@ -19,7 +19,6 @@ const compressors: Record<
 			return zlib.brotliDecompressSync(buffer, options);
 		},
 	},
-	// GZip is untested but Copilot made it so it's totally not my fault if it's slow or doesn't work.
 	gzip: {
 		compress(buffer: Buffer, options?: zlib.ZlibOptions): Buffer {
 			return zlib.gzipSync(buffer, options);
@@ -28,7 +27,6 @@ const compressors: Record<
 			return zlib.gunzipSync(buffer, options);
 		},
 	},
-	// Flate is untested but Copilot made it so it's totally not my fault if it's slow or doesn't work.
 	flate: {
 		compress(buffer: Buffer, options?: zlib.ZlibOptions): Buffer {
 			return zlib.deflateSync(buffer, options);

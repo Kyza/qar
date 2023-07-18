@@ -1,7 +1,7 @@
-import fs from "fs";
-import { compressors } from ".";
-import { QAR } from "./open";
-import getFileInStructure from "./util/getFileInFolderRoot";
+import fs from "node:fs";
+import compressors from "./compressors.js";
+import { QAR } from "./types.js";
+import getFileInStructure from "./util/getFileInFolderRoot.js";
 
 export default function readFile(qar: QAR, filePath: string[]): Buffer {
 	// Iterate through the file and handle symlinks along the way.

@@ -1,12 +1,12 @@
-import crypto from "crypto";
-import fs from "fs";
+import crypto from "node:crypto";
+import fs from "node:fs";
 import {
 	HASH_LENGTH,
 	IDENTIFIER_AND_HASH_LENGTH,
 	IDENTIFIER_LENGTH,
-} from "./constants";
-import { QAR } from "./open";
-import { readFileChunks } from "./util/readFileChunks";
+} from "./constants.js";
+import { QAR } from "./types.js";
+import { readFileChunks } from "./util/readFileChunks.js";
 
 export default function getHash(qar: QAR, real: boolean = false): Buffer {
 	// Here we are getting the real hash.

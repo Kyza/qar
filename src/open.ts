@@ -1,44 +1,15 @@
-import fs from "fs";
-import path from "path";
-import getFiles from "./getFiles";
-import getFooter from "./getFooter";
-import getHash from "./getHash";
-import getHeader from "./getHeader";
-import readFile from "./readFile";
-import { QARFooter, QARHeader } from "./types";
-import verifyIntegrity from "./verifyIntegrity";
-
-export type QAR = {
-	readonly header: QARHeader;
-	readonly footer: QARFooter;
-
-	readonly hash: Buffer;
-	readonly realHash: Buffer;
-
-	readonly files: string[][];
-
-	readonly fileDescriptor: number;
-	readonly path: string;
-	readonly stats: fs.Stats;
-
-	verifyIntegrity(): boolean;
-
-	readFileSync(file: string | string[]): Buffer;
-	readFile(file: string | string[]): Promise<Buffer>;
-
-	invalidateCache(): void;
-
-	close(): void;
-};
-
-const qarCache = new Map<string, QAR>();
+import fs from "node:fs";
+import path from "node:path";
+import getFiles from "./getFiles.js";
+import getFooter from "./getFooter.js";
+import getHash from "./getHash.js";
+import getHeader from "./getHeader.js";
+import readFile from "./readFile.js";
+import { QAR, QARFooter, QARHeader } from "./types.js";
+import verifyIntegrity from "./verifyIntegrity.js";
 
 export default function open(file: string): QAR {
 	const resolvedPath = path.resolve(file);
-
-	if (qarCache.has(resolvedPath)) {
-		return qarCache.get(resolvedPath);
-	}
 
 	const fd = fs.openSync(file, "r+");
 
@@ -106,13 +77,10 @@ export default function open(file: string): QAR {
 		},
 
 		close() {
-			qarCache.delete(resolvedPath);
 			this.invalidateCache();
 			fs.closeSync(fd);
 		},
 	};
-
-	qarCache.set(resolvedPath, qar);
 
 	return qar;
 }

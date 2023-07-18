@@ -1,4 +1,4 @@
-import { File, FileType, Folder, FolderChildren, Symlink } from "../types";
+import { File, FileType, Folder, FolderChildren, Symlink } from "../types.js";
 
 export default function getFileInFolderRoot<Root extends FolderChildren>(
 	root: Root,
@@ -21,18 +21,14 @@ export default function getFileInFolderRoot<Root extends FolderChildren>(
 			}
 			// Check if the path has been visited before.
 			else if (file.type === FileType.SYMLINK) {
-				if (symlinksTraveled.has(file))
-					throw new Error("Circular path detected.");
+				if (symlinksTraveled.has(file)) throw new Error("Circular path detected.");
 				symlinksTraveled.add(file);
 			}
 		}
 		// If the path is empty, then we are at the end of the path.
 		else {
 			// If it already exists and is a folder...
-			if (
-				current[childName] != null &&
-				current[childName].type === FileType.FOLDER
-			)
+			if (current[childName] != null && current[childName].type === FileType.FOLDER)
 				throw new Error("Cannot set an existing folder to a file.");
 			// Make sure to set the reference not the variable.
 			return current[childName] as File;
@@ -43,9 +39,7 @@ export default function getFileInFolderRoot<Root extends FolderChildren>(
 				current = (current[childName] as Folder).children;
 				break;
 			case FileType.FILE:
-				throw new Error(
-					"Path leads to a file before reaching the destination."
-				);
+				throw new Error("Path leads to a file before reaching the destination.");
 			case FileType.SYMLINK:
 				navPath = file.target;
 				current = root;

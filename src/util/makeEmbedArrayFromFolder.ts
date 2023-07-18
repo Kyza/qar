@@ -1,6 +1,6 @@
-import path from "path";
-import { EmbedArray, FileType } from "../types";
-import walkFolder from "./walkFolder";
+import path from "node:path";
+import { EmbedArray, FileType } from "../types.js";
+import walkFolder from "./walkFolder.js";
 
 export default function makeEmbedArrayFromFolder(folder: string): EmbedArray {
 	const filesToEmbed: EmbedArray = [];

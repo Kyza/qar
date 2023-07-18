@@ -1,5 +1,5 @@
-import fs from "fs";
-import { DEFAULT_CHUNK_SIZE } from "..";
+import fs from "node:fs";
+import { DEFAULT_CHUNK_SIZE } from "../constants.js";
 
 // Because fs.createReadStream() is async.
 export function readFileChunks(
@@ -26,21 +26,34 @@ export function readFileChunks(
 	// The chunk size should be clamped to the max chunk size.
 	options.chunkSize = Math.min(options.chunkSize, options.end - options.start);
 
-	const buffer = Buffer.alloc(options.chunkSize);
+	const fileSize = fs.fstatSync(fd).size;
+	const allocSize = Math.min(options.chunkSize, fileSize);
+
+	const buffer = Buffer.alloc(allocSize);
 
 	let position = options.start;
 	while (position < options.end) {
-		const bytesRead = fs.readSync(fd, buffer, 0, options.chunkSize, position);
+		const bytesRead = fs.readSync(fd, buffer, 0, allocSize, position);
 		position += bytesRead;
 
 		if (bytesRead === 0) break;
 
+		// Remove the extra bytes if we read less than the chunk size.
+		// Shortcut subarray if possible.
 		if (position > options.end) {
-			// Remove the extra bytes if we read more than the end.
-			callback(buffer.subarray(0, bytesRead - (position - options.end)));
+			const neededBytes = bytesRead - (position - options.end);
+			if (allocSize === neededBytes) {
+				callback(buffer);
+			} else {
+				callback(buffer.subarray(0, neededBytes));
+			}
 		} else {
-			// Remove the extra bytes if we read less than the chunk size.
-			callback(buffer.subarray(0, bytesRead));
+			const neededBytes = bytesRead;
+			if (allocSize === neededBytes) {
+				callback(buffer);
+			} else {
+				callback(buffer.subarray(0, neededBytes));
+			}
 		}
 	}
 

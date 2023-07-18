@@ -1,3 +1,28 @@
+import fs from "node:fs";
+
+export type QAR = {
+	readonly header: QARHeader;
+	readonly footer: QARFooter;
+
+	readonly hash: Buffer;
+	readonly realHash: Buffer;
+
+	readonly files: string[][];
+
+	readonly fileDescriptor: number;
+	readonly path: string;
+	readonly stats: fs.Stats;
+
+	verifyIntegrity(): boolean;
+
+	readFileSync(file: string | string[]): Buffer;
+	readFile(file: string | string[]): Promise<Buffer>;
+
+	invalidateCache(): void;
+
+	close(): void;
+};
+
 export type DeepPartial<T> = T extends object
 	? {
 			[P in keyof T]?: DeepPartial<T[P]>;

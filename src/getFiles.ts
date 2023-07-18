@@ -1,5 +1,4 @@
-import { QAR } from "./open";
-import { FileType, FolderChildren } from "./types";
+import { FileType, FolderChildren, QAR } from "./types.js";
 
 export default function getFiles(qar: QAR): string[][] {
 	const structure: FolderChildren = qar.footer;

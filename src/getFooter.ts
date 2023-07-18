@@ -1,8 +1,7 @@
-import fs from "fs";
-import { compressors } from ".";
-import { SIZE_LENGTH } from "./constants";
-import { QAR } from "./open";
-import { FolderChildren } from "./types";
+import fs from "node:fs";
+import compressors from "./compressors.js";
+import { SIZE_LENGTH } from "./constants.js";
+import { FolderChildren, QAR } from "./types.js";
 
 export default function getFooter(qar: QAR): FolderChildren {
 	const fileSize = qar.stats.size;
